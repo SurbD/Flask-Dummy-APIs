@@ -1,0 +1,38 @@
+1. First Setup the Flask Server (Done)
+2. Create and Test the SQLite Database(Done) 
+    - Use the Database as a context generator because of the conn.close (Done)
+3. Create HTTP actions like GET and POST (Done)
+4. Add PUT request
+5. Add Unique email with validation if necessary
+6. Add User authentication with Flask-HTTPAuth
+7. Add Token authentication and also option for username and password
+8. Make the password a hash with bcrypt
+
+
+# Curl Commands
+
+Sending Credentials
+$ curl -u [username]:[password] -i http://[host]/api-uri
+
+## for this application we have only one user - Admin
+$ curl -u admin:python -i http://localhost:5000/todo/api/v1.0/tasks
+
+# GET
+$ curl -i http://localhost:5000/todo/api/v1.0/tasks
+$ curl -i http://localhost:5000/todo/api/v1.0/tasks/[int:task_id]
+
+# POST
+[works with Cygwin version of curl from bash]
+$ curl -i -H "Content-Type: application/json" -X POST -d '{"title": "Read a book"}' http://localhost:5000/todo/api/v1.0/tasks
+
+[works with  the regular command prompt]
+$ curl -i -H "Content-Type: application/json" -X POST -d "{"""title""": """Read a book"""}" http://localhost:5000/todo/api/v1.0/tasks
+
+# PUT
+$ curl -i -H "Content-Type: application/json" -X PUT -d '{"done": true}' http://localhost:5000/todo/api/v1.0/tasks/3
+
+#DELETE
+$ curl -i -X DELETE http://localhost:5000/todo/api/v1.0/tasks/2
+[with admin access]
+$ curl -u admin:python -i -X DELETE http://localhost:5000/todo/api/v1.0/tasks/2
+

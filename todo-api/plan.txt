@@ -1,0 +1,20 @@
+First thing Decide what is the root Url to access this service
+ -> http://[hostname]/todo/api/v1.0/
+
+The next step is selecting the resources that will be exposed by this service.
+ -> for this simple application out only resource will be task in the todo list
+
+HTTP METHODS FOR TASK resource
+
+HTTP Method
+- GET --> http://[hostname]/todo/api/v1.0/tasks | Retrieve list of tasks
+- GET --> http://[hostname]/todo/api/v1.0/tasks/[task_id] | Retrieve a task
+- POST --> http://[hostname]/todo/api/v1.0/tasks | Create a new task
+- PUT --> http://[hostname]/todo/api/v1.0/tasks/[task_id] | Update an existing task
+- DELETE --> http://[hostname]/todo/api/v1.0/tasks/[task_id] | Delete a task
+
+We can define the task as having the following fields:
+- id: unique identifier for tasks. Numeric type.
+- title: short task description. String type.
+- description: long task description. Text type.
+- done: task completion state. Boolean type.
