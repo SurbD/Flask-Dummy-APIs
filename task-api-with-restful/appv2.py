@@ -223,11 +223,69 @@ class TaskAPI(Resource):
 
         return {'message': f'Task "Id-{task.id}" has been deleted and no longer exists'}, 204
 
+
+class TaskFilter(Resource):
+    decorators = [auth.login_required]
+
+    def __init__(self):
+
+        self.filters = {
+            "finished": self.get_finished_tasks,
+            "unfinished": self.get_unfinished_tasks
+        }
+        super().__init__()
+
+    def get_finished_tasks(self):
+        tasks = auth.current_user().tasks
+        if not tasks:
+            abort(404)
+        return [task.to_json() for task in tasks if task.done == True]
+
+    def get_unfinished_tasks(self):
+        tasks = auth.current_user().tasks
+        if not tasks:
+            abort(404)
+        return [task.to_json() for task in tasks if task.done == False]
+
+
+    def get(self, filter):
+        # print(type(filter),'---', filter)
+        if (filter:=filter.lower()) not in self.filters:
+            abort(404)
+
+        print(filter)
+        return {filter: self.filters[filter]() }
+
+class TaskSorter(Resource):
+    decorators = [auth.login_required]
+
+    def __init__(self):
+        self.sort_by = {
+            "first_letter": self.sort_by_first_letter
+            # Add sort by completed and time created so you need to add datatime to the DB
+        }
+        super().__init__()
+
+    def sort_by_first_letter(self):
+        tasks = auth.current_user().tasks
+        if not tasks:
+            abort(404)
+
+        json_tasks = [task.to_json() for task in tasks]
+        sorted_tasks = sorted(json_tasks, key=itemgetter('title'))
+
+        return sorted_tasks
+
+    def get(self, sort_opt):
+        if (sort_opt:=sort_opt.lower()) not in self.sort_by:
+            abort(404)
+        return { sort_opt: self.sort_by[sort_opt]() }
+
 api.add_resource(User, "/todo/api/v2/user", endpoint="user")
 api.add_resource(TaskListAPI, "/todo/api/v2/tasks", endpoint="tasks")
 api.add_resource(TaskAPI, "/todo/api/v2/tasks/<int:id>", endpoint="task")
+api.add_resource(TaskFilter, "/todo/api/v2/tasks/<string:filter>/filter", endpoint="tasks_filter")
+api.add_resource(TaskSorter, "/todo/api/v2/tasks/<string:sort_opt>/sort", endpoint="tasks_sorter")
 
 if __name__ == "__main__":
     app.run(debug=True)
-
-# Search Filters
